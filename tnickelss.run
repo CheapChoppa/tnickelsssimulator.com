@@ -1,0 +1,81 @@
+// Define canvas variables
+var canvas = document.getElementById("game-canvas");
+var ctx = canvas.getContext("2d");
+
+// Define player variables
+var playerImg = new Image();
+playerImg.src = "your-image.jpg";
+var playerWidth = 50;
+var playerHeight = 50;
+var playerX = canvas.width / 2 - playerWidth / 2;
+var playerY = canvas.height - playerHeight;
+
+// Define block variables
+var blockWidth = 50;
+var blockHeight = 50;
+var blockX = canvas.width - blockWidth;
+var blockY = canvas.height - blockHeight;
+
+// Define game variables
+var score = 0;
+var speed = 5;
+var gameOver = false;
+
+// Handle keyboard input
+document.addEventListener("keydown", function (event) {
+  if (event.code === "Space") {
+    jump();
+  }
+});
+
+// Define jump function
+function jump() {
+  playerY -= 100;
+}
+
+// Define draw function
+function draw() {
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw player
+  ctx.drawImage(playerImg, playerX, playerY, playerWidth, playerHeight);
+
+  // Draw block
+  ctx.fillStyle = "red";
+  ctx.fillRect(blockX, blockY, blockWidth, blockHeight);
+
+  // Move block left
+  blockX -= speed;
+
+  // If block is off screen, reset its position and increase score
+  if (blockX < 0) {
+    blockX = canvas.width - blockWidth;
+    score++;
+  }
+
+  // If player hits block, end game
+  if (
+    playerX < blockX + blockWidth &&
+    playerX + playerWidth > blockX &&
+    playerY < blockY + blockHeight &&
+    playerY + playerHeight > blockY
+  ) {
+    gameOver = true;
+  }
+
+  // Draw score
+  ctx.fillStyle = "black";
+  ctx.font = "24px Arial";
+  ctx.fillText("Score: " + score, 10, 30);
+
+  // If game is not over, request next frame
+  if (!gameOver) {
+    requestAnimationFrame(draw);
+  } else {
+    alert("Game over! Your score is " + score);
+  }
+}
+
+// Start game
+draw();
